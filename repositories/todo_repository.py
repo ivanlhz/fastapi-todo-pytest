@@ -13,9 +13,12 @@ class TodoRepository():
         self.todos = []
 
     def create_todo(self, todo: TodoCreate) -> Todo:
-        new_todo = (Todo(id = len(self.todos) + 1, **todo.model_dump()))
+        if isinstance(todo, dict):
+            todo = TodoCreate(**todo)  # Convierte el diccionario en el modelo Pydantic
+        new_todo = Todo(id=len(self.todos) + 1, **todo.model_dump())
         self.todos.append(new_todo)
         return new_todo
+
 
     def get_todos(self) -> list[Todo]:
         return self.todos

@@ -1,0 +1,4 @@
+[run]
+omit =
+    app.py
+    test_*.py

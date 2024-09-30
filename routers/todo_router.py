@@ -12,7 +12,7 @@ def create_todo(todo: TodoCreate):
 def get_todos():
     return todo_controller.get_todos()
 
-@router.get('/todo/{todo_id}', response_model=Todo)
+@router.get('/todos/{todo_id}', response_model=Todo)
 def get_todo(todo_id: int):
     return todo_controller.get_todo(todo_id)
 
