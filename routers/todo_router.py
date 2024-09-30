@@ -1,23 +1,25 @@
 from fastapi import APIRouter
+from controllers.todo_controller import TodoController, Todo, TodoCreate
 
-router = APIRouter(prefix='api')
+router = APIRouter(prefix='/api')
+todo_controller = TodoController()
 
-@router.post('/todos')
-def create_todo():
-    pass
+@router.post('/todos', response_model=Todo)
+def create_todo(todo: TodoCreate):
+    return todo_controller.create_todo(todo)
 
-@router.get('/todos')
+@router.get('/todos', response_model=list[Todo])
 def get_todos():
-    pass
+    return todo_controller.get_todos()
 
-@router.get('/todo/{todo_id}')
+@router.get('/todo/{todo_id}', response_model=Todo)
 def get_todo(todo_id: int):
-    pass
+    return todo_controller.get_todo(todo_id)
 
-@router.path('/todos/{todo_id}')
-def update_todos(todo_id: int):
-    pass
+@router.patch('/todos/{todo_id}', response_model=Todo)
+def update_todos(todo_id: int, updated_todo: TodoCreate):
+    return todo_controller.update_todo(todo_id, updated_todo)
 
 @router.delete('/todos/{todo_id}')
 def delete_todo(todo_id: int):
-    pass
+    return todo_controller.delete_todo(todo_id)
