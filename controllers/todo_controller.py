@@ -1,43 +1,31 @@
 from fastapi import HTTPException
-from pydantic import BaseModel
+from services.todo_service import TodoService, TodoCreate, Todo
 
-class TodoCreate(BaseModel):
-    title: str
-
-class Todo(TodoCreate):
-    id: int
-    completed: bool = False
-
-
+# Los controladores se encargan de llevar la logica de la aplicacion, de conectar todas las piezas
 class TodoController():
     def __init__(self):
-        self.todos = []
+        self.todo_service = TodoService()
 
     def create_todo(self, todo: TodoCreate):
-        new_todo = (Todo(id = len(self.todos) + 1, **todo.model_dump()))
-        self.todos.append(new_todo)
-        return new_todo
+        return self.todo_service.create_todo(todo)
 
     def get_todos(self):
-        return self.todos
+        return self.todo_service.get_todos()
 
     def get_todo(self, todo_id: int):    
-        for todo in self.todos:
-            if todo.id == todo_id:
-                return todo
-        raise HTTPException(status_code=404, detail="Todo not found")
+        todo = self.todo_service.get_todo(todo_id)
+        if todo is None:
+            raise HTTPException(status_code=404, detail="Todo not found")
+        return todo
 
 
     def update_todo(self, todo_id: int, updated_todo: TodoCreate):
-        for todo in self.todos:
-            if todo.id == todo_id:
-                todo.title = updated_todo.title
-                return todo
-        raise HTTPException(status_code=404, detail="Todo not found")
+        todo = self.todo_service.update_todo(todo_id, updated_todo)
+        if todo is None:
+            raise HTTPException(status_code=404, detail="Todo not found")
+        return todo
 
     def delete_todo(self, todo_id: int):
-        for index,todo in enumerate(self.todos):
-            if (todo.id == todo_id):
-                del self.todos[index]
-                return {"message": "✔️Todo deleted successfully"}
+        if self.todo_service.delete_todo(todo_id):
+            return {'message': "Todo deleted successfully ✔️"}
         raise HTTPException(status_code=404, detail="Todo not found")
